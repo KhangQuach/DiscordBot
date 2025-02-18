@@ -1,8 +1,10 @@
 const fs = require('node:fs');
 const path = require('node:path');
+const { REST, Routes } = require('discord.js');
 const { Client, Collection, Events, GatewayIntentBits, MessageFlags } = require('discord.js');
-const { token } = require('./config.json');
+const { clientId, guildId, token } = require('./config.json');
 
+//intends
 const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds,          // Basic intent for guild related events
@@ -16,6 +18,7 @@ const client = new Client({
 });
 
 client.commands = new Collection();
+// Grab all the command folders from the commands directory you created earlier
 const foldersPath = path.join(__dirname, 'src/commands');
 const commandFolders = fs.readdirSync(foldersPath);
 
@@ -33,10 +36,7 @@ for (const folder of commandFolders) {
 	}
 }
 
-client.once(Events.ClientReady, readyClient => {
-	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
-});
-
+// Handle interaction 
 client.on(Events.InteractionCreate, async interaction => {
 	console.log(interaction);
 	if (!interaction.isChatInputCommand()) return;
@@ -58,5 +58,12 @@ client.on(Events.InteractionCreate, async interaction => {
 		}
 	}
 });
+// Once the client is ready, log the bot's tag to the console
+client.once(Events.ClientReady, readyClient => {
+	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+});
+
+
+
 
 client.login(token);
