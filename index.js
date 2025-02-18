@@ -3,7 +3,17 @@ const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits, MessageFlags } = require('discord.js');
 const { token } = require('./config.json');
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({
+	intents: [
+		GatewayIntentBits.Guilds,          // Basic intent for guild related events
+		GatewayIntentBits.GuildMembers,    // Privileged intent for receiving all member-related events
+		GatewayIntentBits.GuildPresences,  // Privileged intent for receiving presence updates
+		GatewayIntentBits.GuildMessages,   // Intent for receiving messages in guilds
+		GatewayIntentBits.DirectMessages,  // Intent for receiving direct messages
+		GatewayIntentBits.MessageContent,   // Privileged intent for receiving all content of messages
+		GatewayIntentBits.GuildVoiceStates
+	]
+});
 
 client.commands = new Collection();
 const foldersPath = path.join(__dirname, 'src/commands');
@@ -28,6 +38,7 @@ client.once(Events.ClientReady, readyClient => {
 });
 
 client.on(Events.InteractionCreate, async interaction => {
+	console.log(interaction);
 	if (!interaction.isChatInputCommand()) return;
 	const command = interaction.client.commands.get(interaction.commandName);
 
